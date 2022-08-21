@@ -16,7 +16,7 @@ const Region = () => {
     };
 
     const addRegion = async()=>{
-        await axios.post("http://localhost:3000/region",{
+        await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/region`,{
             region:region, district:district
         }).then((response)=>{
             console.log(response.data);

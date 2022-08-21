@@ -17,7 +17,7 @@ const [error, setError] = useState("");
   };
 
   const addUser = async()=>{
-    await axios.post("http://localhost:3000/user", {
+    await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
       firstname:firstname, lastname:lastname, email:email, password:password,
     }).then((response)=>{
       //{"/login"};

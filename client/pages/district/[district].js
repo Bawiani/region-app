@@ -17,7 +17,7 @@ const District = ()=> {
   }, [district]);
 
   const getData = async()=>{
-    const response = await axios.get(`http://localhost:3000/district/${district}`);
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/district/${district}`);
     if(response.status === 200){
       setData(response.data);
     }

@@ -15,7 +15,7 @@ const Login = () => {
     };
 
     const logIn = async()=>{
-        await axios.post("http://localhost:3000/auth",{
+        await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth`,{
             email:email, password:password,
         }).then((response) =>{
             localStorage.setItem("token", response.data);

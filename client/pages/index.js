@@ -12,7 +12,7 @@ const Home = ()=> {
   }, []);
 
   const getData = async()=>{
-    const response = await axios.get("http://localhost:3000/");
+    const response = await axios.get(process.env.NEXT_PUBLIC_API_URL);
     if(response.status === 200){
       setData(response.data);
     }

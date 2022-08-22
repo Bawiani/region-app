@@ -29,10 +29,8 @@ const Home = ()=> {
 
       <div className="nav">
         <a href="" className="active">Home</a>
-        <a href="">News</a>
-        <a href="">Contact</a>
-        <a href="">About</a>
-        <a href="/login" className="logout">Login</a>
+        <a href="/region">Add Region</a>
+        <a href="">Add District</a>
       </div>
       <div style={{marginTop:"15px"}}>
         <table className="styled_table">
@@ -40,6 +38,7 @@ const Home = ()=> {
             <tr>
               <th style={{textAlign:"center"}}>No.</th>
               <th style={{textAlign:"center"}}>Region Name</th>
+              <th style={{textAlign:"center"}}>Regional Capital</th>
               <th style={{textAlign:"center"}}>Action(s)</th>
             </tr>
           </thead>
@@ -49,6 +48,7 @@ const Home = ()=> {
                 <tr key={index}>
                   <th scope='row'>{index + 1}</th>
                   <td>{item.regionname}</td>
+                  <td>{item.capital}</td>
                   <td><a href={`/district/${item.regionname}`} className="btn_view">View</a></td>
                 </tr>
               )

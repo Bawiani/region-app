@@ -4,9 +4,14 @@ const Region = require('../models/region');
 const router = new express();
 
 router.post('/region', async(req, res) => {
+
+    const duplicateRegion = await Region.findOne({ regionname: req.body.region });
+    if (duplicateRegion)
+        return res.status(409).send({ message: "Region already exist!" });
+
     const region = await new Region({
         regionname: req.body.region,
-        districtname: req.body.district
+        capital: req.body.capital
     });
     try {
         await region.save();
@@ -20,10 +25,8 @@ router.post('/region', async(req, res) => {
 });
 
 router.get('/', async(req, res) => {
-    //const region = await Region.distinct("regionname", { regionname: "Upper West" });
-    //console.log(region);
     try {
-        const region = await Region.distinct("regionname", {});
+        const region = await Region.find();
         res.send(region);
     } catch (err) {
         res.status(404).send(err);

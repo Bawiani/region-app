@@ -5,7 +5,7 @@ const regionSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    districtname: {
+    capital: {
         type: String,
         required: true
     }

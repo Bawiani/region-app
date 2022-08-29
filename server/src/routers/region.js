@@ -5,13 +5,14 @@ const router = new express();
 
 router.post('/region', async(req, res) => {
 
-    const duplicateRegion = await Region.findOne({ regionname: req.body.region });
-    if (duplicateRegion)
-        return res.status(409).send({ message: "Region already exist!" });
+    const alreadyExist = await Region.findOne({ regionname: req.body.region });
+    if (alreadyExist)
+        return res.status(400).send({ message: "Region already exist!" });
 
     const region = await new Region({
         regionname: req.body.region,
-        capital: req.body.capital
+        capital: req.body.capital,
+        population: req.body.population
     });
     try {
         await region.save();

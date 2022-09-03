@@ -251,6 +251,17 @@ a {
     cursor: pointer;
 }
 
+@media screen and (max-width:600px) {
+    .region_container,
+    .reg_input,
+    .region_form_container,
+    .region_left,
+    .region_right {
+        width: 100%;
+        margin-top: 0;
+    }
+}
+
 @media (prefers-color-scheme: dark) {
     html {
         color-scheme: dark;

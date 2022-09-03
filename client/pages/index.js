@@ -44,10 +44,12 @@ const Home = () => {
             capital:capital,
             population:population
         }).then((response)=>{
-            setMessage(response.data.message);
+          const result=response.data.data;
+          setData([...data, result]);
+          setMessage(response.data.message); 
         }).catch((err)=>{
-            const response = err.response;
-            setMessage(response.data.message);
+          console.log(err);
+            setMessage(err.response.message);
         }).finally(()=>{
             setButtonText("Submit");
             setButtonColor(false);
@@ -72,8 +74,6 @@ const Home = () => {
       </Head>
       <div className="nav">
         <a href="" className="active">Home</a>
-        <a href="/region"> Add Region </a>
-        <a href=""> Add District </a>
       </div>
       <div className="region_container">
           <div className="region_form_container">

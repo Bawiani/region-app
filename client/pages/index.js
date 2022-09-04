@@ -47,9 +47,9 @@ const Home = () => {
           const result=response.data.data;
           setData([...data, result]);
           setMessage(response.data.message); 
+            setState(initialState);
         }).catch((err)=>{
-          console.log(err);
-            setMessage(err.response.message);
+          setMessage(err.response.message);
         }).finally(()=>{
             setButtonText("Submit");
             setButtonColor(false);

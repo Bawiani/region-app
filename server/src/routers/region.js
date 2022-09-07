@@ -25,6 +25,7 @@ router.post('/region', async(req, res) => {
     }
 });
 
+// Get all region
 router.get('/', async(req, res) => {
     try {
         const region = await Region.find();
@@ -33,17 +34,51 @@ router.get('/', async(req, res) => {
         res.status(404).send(err);
     }
 });
-router.get('/district/:regionname', async(req, res) => {
-    try {
-        const region = await Region.find({ regionname: req.params.regionname });
-        if (!region)
-            return res.status(404).send();
 
-        res.send(region);
-    } catch (err) {
+//Get region by ID
+router.get("/region/:id", async(req, res) => {
+
+    try {
+        const region = await Region.findById(req.params.id);
+        if (!region) {
+            return res.status(404).send();
+        }
+        res.status(200).send(region);
+    } catch (e) {
+        res.status(500).send(e);
+    }
+});
+
+//Update region
+router.patch('/region/:id', async(req, res) => {
+    try {
+        const region = await Region.findById(req.params.id);
+
+        region.regionname = req.body.region;
+        region.capital = req.body.capital;
+        region.population = req.body.population;
+
+        await region.save();
+        res.status(200).send({
+            message: "Record updated sucessfully!",
+            data: region
+        });
+    } catch (error) {
         res.status(500).send({ message: "Internal Server Error!" });
     }
+});
 
+//Delete region
+router.delete('/region/:id', async(req, res) => {
+    try {
+        const region = await Region.findByIdAndDelete(req.params.id);
+        if (!region) {
+            return res.status(404).send();
+        }
+        await res.send(region);
+    } catch (error) {
+        res.status(500).send({ message: "Internal Server Error!" });
+    }
 });
 
 module.exports = router;

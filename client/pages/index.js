@@ -37,19 +37,17 @@ const Home = () => {
     };
 
     const addRegion = async()=>{
-        setButtonText("Please wait");
-        setButtonColor(true);
-        await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/region`,{
-            region:region, 
-            capital:capital,
-            population:population
+            setButtonText("Please wait");
+            setButtonColor(true);
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/region`,{
+                region:region, capital:capital, population:population
         }).then((response)=>{
-          const result=response.data.data;
-          setData([...data, result]);
-          setMessage(response.data.message); 
+            const result=response.data.data;
+            setData([...data, result]);
+            setMessage(response.data.message); 
             setState(initialState);
         }).catch((err)=>{
-          setMessage(err.response.message);
+            setMessage(err.response.message);
         }).finally(()=>{
             setButtonText("Submit");
             setButtonColor(false);
@@ -64,6 +62,16 @@ const Home = () => {
             addRegion(state);
         }
     };
+    
+    const onDelete = async (_id) => {
+        if(window.confirm("Are you sure you want to delete this region")){
+            const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/region/${_id}`);
+            if(response.status === 200){
+                getData();
+                window.alert("Record deleted successfully!");
+            }
+        }
+    };
 
   return (
     <div>
@@ -75,50 +83,60 @@ const Home = () => {
       <div className="nav">
         <a href="" className="active">Home</a>
       </div>
-      <div className="region_container">
           <div className="region_form_container">
-            <div className="region_left">
-              <form className="form_container" onSubmit={submitData}>
-                  <div>{message}</div>
-                  <input type="text" name="region" className="reg_input" placeholder="Enter Region Name" onChange={changeInput} value={region} />
-                  <input type="text" name="capital" className="reg_input" placeholder="Enter Region Capital" onChange={changeInput} value={capital} />
-                  <input type="number" name="population" className="reg_input" placeholder="Enter Population" onChange={changeInput} value={population} />
-                  <button type="submit" className="btn_reg" onClick={()=>{buttonColor}} style={{backgroundColor:buttonColor==true?"gray":"green"}}> {buttonText} </button>
-              </form>
-            </div>
-            <div className="region_right">
-                <div style={{ marginTop: "15px" }}>
-                  <table className="styled_table">
-                    <thead>
-                      <tr>
-                        <th style={{ textAlign: "center" }}> No. </th>
-                        <th style={{ textAlign: "center" }}> Region Name </th>
-                        <th style={{ textAlign: "center" }}> Regional Capital </th>
-                        <th style={{ textAlign: "center" }}> Population </th>
-                        <th style={{ textAlign: "center" }}> Action(s) </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data &&
-                        data.map((item, index) => {
-                          return (
-                            <tr key={index}>
-                              <th scope="row"> {index + 1} </th> 
-                              <td> {item.regionname} </td>
-                              <td> {item.capital} </td>
-                              <td> {item.population} </td> 
-                              <td> <a href={`/district/${item.regionname}`} className="btn_view">View</a></td>
-                            </tr>
-                          );
-                        })} 
-                    </tbody> 
-                  </table>
-                  <div> {data.length === 0 && <p style={{textAlign:"center"}}> Data not found! </p>} </div> 
+            <div className="col">
+              <div className="panel">
+                <div className="panel-body">
+                  <form className="form_container" onSubmit={submitData}>
+                    <div>{message}</div>
+                    <input type="text" name="region" className="reg_input" placeholder="Enter Region Name" onChange={changeInput} value={region} />
+                    <input type="text" name="capital" className="reg_input" placeholder="Enter Region Capital" onChange={changeInput} value={capital} />
+                    <input type="number" name="population" className="reg_input" placeholder="Enter Population" onChange={changeInput} value={population} />
+                    <button type="submit" className="btn_reg" onClick={()=>{buttonColor}} style={{backgroundColor:buttonColor==true?"gray":"green"}}> {buttonText} </button>
+                  </form>
                 </div>
+              </div>
+            </div>
+            <div className="col">
+              <div className="panel">
+                <div className="panel-body">
+                  <div className="panel-table">
+                    <table className="styled_table">
+                      <thead>
+                        <tr>
+                          <th style={{ textAlign: "center" }}> No. </th>
+                          <th style={{ textAlign: "center" }}> Region Name </th>
+                          <th style={{ textAlign: "center" }}> Regional Capital </th>
+                          <th style={{ textAlign: "center" }}> Population </th>
+                          <th style={{ textAlign: "center" }}> Action(s) </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data &&
+                          data.map((item, index) => {
+                            return (
+                              <tr key={index}>
+                                <th scope="row"> {index + 1} </th> 
+                                <td> {item.regionname} </td>
+                                <td> {item.capital} </td>
+                                <td> {item.population} </td> 
+                                <td> 
+                                  <a href={`/region/${item._id}`} className="btn_edit">Edit</a>&nbsp;
+                                  <a className="btn_delete" onClick={()=> onDelete(item._id)}>Delete</a>
+                                </td>
+                              </tr>
+                            );
+                          })} 
+                      </tbody> 
+                    </table>
+                    <div> {data.length === 0 && <p style={{textAlign:"center"}}> Data not found! </p>} </div> 
+                  </div>
+                </div>
+              </div>
+                
               </div>
           </div>
       </div>
-    </div>
   );
 };
 

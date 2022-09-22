@@ -9,9 +9,7 @@ const Home = () => {
 
     const [data, setData] = useState([]);
     const initialState = {
-            region:"",
-            capital:"",
-            population:""
+            region:"", capital:"", population:""
     };
 
     const [buttonText, setButtonText] = useState("Submit");
@@ -67,9 +65,13 @@ const Home = () => {
             addRegion(state);
         }
     };
+
+    const resetFields = ()=>{
+      setState(initialState);
+    }
     
     const onDelete = async (_id) => {
-        if(window.confirm("Are you sure you want to delete this region")){
+        if(window.confirm("Are you sure you want to delete this region!")){
             const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/region/${_id}`);
             if(response.status === 200){
                 getData();
@@ -86,10 +88,10 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="nav">
-        <a href="" className="active">Home</a>
+        <a href="/" className="active">Home</a>
       </div>
       <div className="showmodal">
-        <button type="button" className="btn_showregionmodal" onClick={()=>setShowModal(true)}>Add Region</button>
+        <button type="button" className="btn_showmodal" onClick={()=>setShowModal(true)}>Add Region</button>
       </div>
       <RegionModal show={showModal} onClose={()=>setShowModal(false)}>
         <div className="panel">
@@ -99,7 +101,11 @@ const Home = () => {
               <input type="text" name="region" className="reg_input" placeholder="Enter Region Name" onChange={changeInput} value={region} />
               <input type="text" name="capital" className="reg_input" placeholder="Enter Region Capital" onChange={changeInput} value={capital} />
               <input type="number" name="population" className="reg_input" placeholder="Enter Population" onChange={changeInput} value={population} />
-              <button type="submit" className="btn_reg" onClick={()=>{buttonColor}} style={{backgroundColor:buttonColor==true?"gray":"green"}}> {buttonText} </button>
+              <div className="btn">
+                <button type="submit" className="btn_reg" onClick={()=>{buttonColor}} style={{backgroundColor:buttonColor==true?"gray":"green"}}> {buttonText} </button>&nbsp;
+                <button type="reset" className="btn_reset" onClick={resetFields} > Reset </button>
+              </div>
+              
             </form>
           </div>
         </div>
@@ -127,6 +133,7 @@ const Home = () => {
                         <td> {item.capital} </td>
                         <td> {item.population} </td> 
                         <td> 
+                          <a href={`/district/${item._id}`} className="btn_view">View District</a>&nbsp;
                           <a href={`/region/${item._id}`} className="btn_edit">Edit</a>&nbsp;
                           <a className="btn_delete" onClick={()=> onDelete(item._id)}>Delete</a>
                         </td>

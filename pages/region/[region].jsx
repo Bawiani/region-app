@@ -6,72 +6,66 @@ import { useRouter } from 'next/router';
 import axios from "axios";
 
 const Region = () => {
+    const initialState ={
+      regionname:'', capital:'', population:''
+    }
 
+    const [state, setState] = useState(initialState);
     const [buttonText, setButtonText] = useState("Update");
     const [buttonColor, setButtonColor] = useState(false);
     const [message, setMessage] = useState('');
-    const [region, setRegion] = useState();
-    const [capital, setCapital] = useState();
-    const [population, setPopulation] = useState();
-    
+    const {regionname, capital, population} = state;
+
     const router = useRouter();
 
     const id  = router.query.region;
 
     useEffect(() => {
         if(id) {
-            getRegion(id);
+            getData(id);
         }
     }, [id]);
 
-    const getRegion = async() => {
-      
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/region/${id}`).then((response)=>{
+    const getData = async() => {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/region/${id}`)
+      .then((response)=>{
             if(response.status === 200){
-                setRegion(response.data.regionname);
-                setCapital(response.data.capital);
-                setPopulation(response.data.population);
+              const data = response.data;
+              setState(data);
             }
         }).catch((err)=>{
             console.log(err.response);
         });
     };
 
-    const updateRegion = async() => {
-      setButtonText("Please wait");
-      setButtonColor(true);
-      await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/region/${id}`, {
-          region: region,
-          capital: capital,
-          population:population
-      }).then((response) => {
-          setMessage(response.data.message); 
-      }).catch((err) => {
-        setMessage(err.response.message);
-      }).finally(()=>{
-        setButtonText("Update");
-        setButtonColor(false);
-        router.push('/');
-      });
-  };
-  const submitData = (e)=>{
-    e.preventDefault();
-    if(!region || !capital || !population){
-        setMessage("Please provide value for each input field!");
-    }else{
-      updateRegion(region);
-    }
-};
-    const handleRegion = (e) => {
-        setRegion(e.target.value);
-    };
-    const handleCapital = (e) => {
-        setCapital(e.target.value);
-    };
-    const handlePopulation = (e) => {
-        setPopulation(e.target.value);
+    const handleInput = (e)=>{
+      let {name, value} = e.target;
+      setState({...state, [name]:value});
     };
 
+    const updateRegion = async() => {
+        setButtonText("Please wait");
+        setButtonColor(true);
+        await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/region/${id}`, {
+            regionname:regionname, capital:capital, population:population
+        }).then((response) => {
+            setMessage(response.data.message); 
+        }).catch((err) => {
+          setMessage(err.response.message);
+        }).finally(()=>{
+          setButtonText("Update");
+          setButtonColor(false);
+          router.push('/');
+        });
+    };
+    const submitData = (e)=>{
+        e.preventDefault();
+        if(!regionname || !capital || !population){
+            setMessage("Please provide value for each input field!");
+        }else{
+          updateRegion(state);
+        }
+    };
   return (
     <div>
       <Head>
@@ -80,23 +74,21 @@ const Region = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="nav">
-        <a href="" className="active">Home</a>
+        <a href="/" className="active">Home</a>
       </div>
       <div className="region_form_container">
-        <div className="col">
           <div className="panel">
             <div className="panel-body">
               <form className="form_container" onSubmit={submitData}>
                 <div>{message}</div>
-                <input type="text" name="region" className="reg_input" placeholder="Enter Region Name" onChange={(e) => handleRegion(e)} value={region} />
-                <input type="text" name="capital" className="reg_input" placeholder="Enter Region Capital" onChange={(e) => handleCapital(e)} value={capital} />
-                <input type="number" name="population" className="reg_input" placeholder="Enter Population" onChange={(e) => handlePopulation(e)} value={population} />
+                <input type="text" name="regionname" className="reg_input" placeholder="Enter Region Name" onChange={handleInput} value={regionname} />
+                <input type="text" name="capital" className="reg_input" placeholder="Enter Region Capital" onChange={handleInput} value={capital} />
+                <input type="number" name="population" className="reg_input" placeholder="Enter Population" onChange={handleInput} value={population} />
                 <button type="submit" className="btn_reg" onClick={()=>{buttonColor}} style={{backgroundColor:buttonColor==true?"gray":"green"}}> {buttonText} </button>
               </form>
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 };

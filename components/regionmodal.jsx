@@ -1,5 +1,6 @@
 import {useState, useEffect} from "react";
 import ReactDOM from "react-dom";
+import { AiOutlineClose } from "react-icons/ai";
 import styles from "../styles/Modal.module.css";
 
 const RegionModal = ({show, onClose, children})=>{
@@ -18,7 +19,7 @@ const RegionModal = ({show, onClose, children})=>{
         <div className={styles.overlay}>
             <div className={styles.modal}>
                 <div className={styles.header}>
-                    <button className="btn_delete" onClick={handleClose} >Close</button>   
+                    <button className="btn_delete" onClick={handleClose} ><AiOutlineClose /></button>   
                 </div>
                 <div className={styles.body}>{children}</div>
             </div>

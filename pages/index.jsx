@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import RegionModal from "../components/regionmodal";
+import { BiEdit } from "react-icons/bi";
 import styles from "../styles/Home.module.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -134,7 +135,7 @@ const Home = () => {
                         <td> {item.population} </td> 
                         <td> 
                           <a href={`/district/${item._id}`} className="btn_view">View District</a>&nbsp;
-                          <a href={`/region/${item._id}`} className="btn_edit">Edit</a>&nbsp;
+                          <a href={`/region/${item._id}`} className="btn_edit"><BiEdit /></a>&nbsp;
                           <a className="btn_delete" onClick={()=> onDelete(item._id)}>Delete</a>
                         </td>
                       </tr>
@@ -151,3 +152,4 @@ const Home = () => {
 };
 
 export default Home;
+//AiOutlineClose

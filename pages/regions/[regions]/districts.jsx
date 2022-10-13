@@ -1,13 +1,15 @@
 import Head from "next/head";
 import Image from "next/image";
-import DistrictModal from "../../components/districtmodal";
+import DistrictModal from "../../../components/districtmodal";
+import { BiEdit } from "react-icons/bi";
+import { AiTwotoneDelete } from "react-icons/ai";
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
 import axios from "axios";
 
 const District = () => {
     const initialState = {
-        district_name:'', district_capital:'', district_location:'', district_population:'', dce_name:''
+        name:'', capital:'', location:'', population:'', dce_name:''
     };
 
     const [state, setState] = useState(initialState)
@@ -17,7 +19,7 @@ const District = () => {
     const [buttonColor, setButtonColor] = useState(false);
     const [buttonText, setButtonText] = useState("Submit");
 
-    const {district_name, district_capital, district_location, district_population, dce_name} = state;
+    const {name, capital, location, population, dce_name} = state;
 
     const handleInput = (e)=>{
         let {name, value} = e.target;
@@ -26,7 +28,8 @@ const District = () => {
 
     const router = useRouter();
 
-    const id  = router.query.district
+    const id  = router.query.regions;
+    //console.log(id);
     
     useEffect(()=>{
         if(id){
@@ -36,21 +39,18 @@ const District = () => {
     
     const getData = async() => {
         
-        await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/district/${id}`).then((response) => {
+        await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/regions/${id}/districts`).then((response) => {
             if(response.status === 200){
             setData(response.data);
         }
         }); 
     };
 
-    
-    
     const addDistrict = async() =>{
-
         setButtonText("Please wait");
         setButtonColor(true);
-        await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/district/${id}`, {
-            district_name:district_name, district_capital:district_capital, district_location:district_location, district_population:district_population, dce_name:dce_name
+        await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/regions/${id}/districts`, {
+            name:name, capital:capital, location:location, population:population, dce_name:dce_name
         }).then((response)=>{
             const result = response.data.data;
             setData([...data, result]);
@@ -68,7 +68,7 @@ const District = () => {
 
     const submitData = (e)=>{
         e.preventDefault();
-        if(!district_name || !district_capital || !district_location || !district_population || !dce_name){
+        if(!name || !capital || !location || !population || !dce_name){
             console.log('Please provide value for each input field!');
         }else{
             addDistrict(state);
@@ -81,7 +81,7 @@ const District = () => {
 
     const onDelete = async (_id) => {
         if(window.confirm("Are you sure you want to delete this district!")){
-            const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/district/${_id}`);
+            const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/districts/${_id}`);
             if(response.status === 200){
                 getData();
                 window.alert("Record deleted successfully!");
@@ -91,7 +91,7 @@ const District = () => {
     return(
         <div>
             <div className="nav">
-                <a href="/" className="active">Home</a>
+                <a href="/regions" className="active">Home</a>
             </div>
             <div className="showmodal">
                 <button type="button" className="btn_showmodal" onClick={()=>setShowModal(true)}>Add District</button>
@@ -101,10 +101,10 @@ const District = () => {
                     <div className="panel-body">
                         <form className="form_container" onSubmit={submitData}>
                             <div>{message}</div>
-                            <input type="text" name="district_name" className="reg_input" placeholder="Enter District Name" onChange={handleInput} value={district_name}  />
-                            <input type="text" name="district_capital" className="reg_input" placeholder="Enter District Capital" onChange={handleInput} value={district_capital} />
-                            <input type="text" name="district_location" className="reg_input" placeholder="Enter District Location" onChange={handleInput} value={district_location} />
-                            <input type="number" name="district_population" className="reg_input" placeholder="Enter District Population" onChange={handleInput} value={district_population} />
+                            <input type="text" name="name" className="reg_input" placeholder="Enter District Name" onChange={handleInput} value={name}  />
+                            <input type="text" name="capital" className="reg_input" placeholder="Enter District Capital" onChange={handleInput} value={capital} />
+                            <input type="text" name="location" className="reg_input" placeholder="Enter District Location" onChange={handleInput} value={location} />
+                            <input type="number" name="population" className="reg_input" placeholder="Enter District Population" onChange={handleInput} value={population} />
                             <input type="text" name="dce_name" className="reg_input" placeholder="Enter Name of DCE/MCE" onChange={handleInput} value={dce_name} />
                             <div>
                                 <button type="submit" className="btn_reg" onClick={()=>{buttonColor}} style={{backgroundColor:buttonColor==true?"gray":"green"}} > {buttonText} </button>&nbsp;
@@ -136,14 +136,14 @@ const District = () => {
                                         return(
                                             <tr key={index}>
                                                 <th scope="row"> {index + 1} </th>
-                                                <td> {item.district_name} </td>
-                                                <td> {item.district_capital} </td>
-                                                <td> {item.district_location} </td>
-                                                <td> {item.district_population} </td>
+                                                <td> {item.name} </td>
+                                                <td> {item.capital} </td>
+                                                <td> {item.location} </td>
+                                                <td> {item.population} </td>
                                                 <td> {item.dce_name} </td>
                                                 <td>
-                                                    <a href={`/district/district/${item._id}`} className="btn_edit">Edit</a>&nbsp;
-                                                    <a className="btn_delete" onClick={()=> onDelete(`${item._id}`)}>Delete</a>
+                                                    <a href={`/districts/${item._id}`} className="btn_edit"><BiEdit /></a>&nbsp;
+                                                    <a className="btn_delete" onClick={()=> onDelete(`${item._id}`)}><AiTwotoneDelete /></a>
                                                 </td>
                                             </tr>
                                         );

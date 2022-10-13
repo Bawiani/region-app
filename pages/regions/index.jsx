@@ -1,16 +1,18 @@
 import Head from "next/head";
 import Image from "next/image";
-import RegionModal from "../components/regionmodal";
+import RegionModal from "../../components/regionmodal";
 import { BiEdit } from "react-icons/bi";
-import styles from "../styles/Home.module.css";
+import { AiTwotoneDelete } from "react-icons/ai";
+import styles from "../../styles/Home.module.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Home = () => {
 
     const [data, setData] = useState([]);
+    const [count, setCount] = useState([]);
     const initialState = {
-            region:"", capital:"", population:""
+            name:"", capital:"", population:""
     };
 
     const [buttonText, setButtonText] = useState("Submit");
@@ -19,15 +21,16 @@ const Home = () => {
     const [message, setMessage] = useState('');
     const [showModal, setShowModal] = useState(false);
 
-    const { region, capital, population } = state;
+    const { name, capital, population } = state;
 
     useEffect(() => {
       getData();
     }, []);
 
     const getData = async () => {
-      const response = await axios.get(process.env.NEXT_PUBLIC_API_URL);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/regions`);
       if (response.status === 200) {
+        console.log(response.data);
         setData(response.data);
       }
     };
@@ -40,8 +43,8 @@ const Home = () => {
     const addRegion = async()=>{
             setButtonText("Please wait");
             setButtonColor(true);
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/region`,{
-                region:region, capital:capital, population:population
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/regions`,{
+                name:name, capital:capital, population:population
         }).then((response)=>{
             const result=response.data.data;
             setData([...data, result]);
@@ -60,7 +63,7 @@ const Home = () => {
 
     const submitData = (e)=>{
         e.preventDefault();
-        if(!region || !capital || !population){
+        if(!name || !capital || !population){
             setMessage("Please provide value for each input field!");
         }else{
             addRegion(state);
@@ -73,7 +76,7 @@ const Home = () => {
     
     const onDelete = async (_id) => {
         if(window.confirm("Are you sure you want to delete this region!")){
-            const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/region/${_id}`);
+            const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/regions/${_id}`);
             if(response.status === 200){
                 getData();
                 window.alert("Record deleted successfully!");
@@ -89,7 +92,7 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="nav">
-        <a href="/" className="active">Home</a>
+        <a href="/regions" className="active">Home</a>
       </div>
       <div className="showmodal">
         <button type="button" className="btn_showmodal" onClick={()=>setShowModal(true)}>Add Region</button>
@@ -99,7 +102,7 @@ const Home = () => {
           <div className="panel-body">
             <form className="form_container" onSubmit={submitData}>
               <div>{message}</div>
-              <input type="text" name="region" className="reg_input" placeholder="Enter Region Name" onChange={changeInput} value={region} />
+              <input type="text" name="name" className="reg_input" placeholder="Enter Region Name" onChange={changeInput} value={name} />
               <input type="text" name="capital" className="reg_input" placeholder="Enter Region Capital" onChange={changeInput} value={capital} />
               <input type="number" name="population" className="reg_input" placeholder="Enter Population" onChange={changeInput} value={population} />
               <div className="btn">
@@ -130,13 +133,13 @@ const Home = () => {
                     return (
                       <tr key={index}>
                         <th scope="row"> {index + 1} </th> 
-                        <td> {item.regionname} </td>
+                        <td> {item.name} </td>
                         <td> {item.capital} </td>
                         <td> {item.population} </td> 
                         <td> 
-                          <a href={`/district/${item._id}`} className="btn_view">View District</a>&nbsp;
-                          <a href={`/region/${item._id}`} className="btn_edit"><BiEdit /></a>&nbsp;
-                          <a className="btn_delete" onClick={()=> onDelete(item._id)}>Delete</a>
+                          <a href={`/regions/${item._id}/districts`} className="btn_view">View District {item.districts.length}</a>&nbsp;
+                          <a href={`/regions/${item._id}`} className="btn_edit"><BiEdit /></a>&nbsp;
+                          <a className="btn_delete" onClick={()=> onDelete(item._id)}><AiTwotoneDelete /></a>
                         </td>
                       </tr>
                     );

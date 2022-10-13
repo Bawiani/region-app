@@ -7,18 +7,18 @@ import axios from "axios";
 
 const Region = () => {
     const initialState ={
-      regionname:'', capital:'', population:''
+      name:'', capital:'', population:''
     }
 
     const [state, setState] = useState(initialState);
     const [buttonText, setButtonText] = useState("Update");
     const [buttonColor, setButtonColor] = useState(false);
     const [message, setMessage] = useState('');
-    const {regionname, capital, population} = state;
+    const {name, capital, population} = state;
 
     const router = useRouter();
 
-    const id  = router.query.region;
+    const id  = router.query.regions;
 
     useEffect(() => {
         if(id) {
@@ -27,7 +27,7 @@ const Region = () => {
     }, [id]);
 
     const getData = async() => {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/region/${id}`)
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/regions/${id}`)
       .then((response)=>{
             if(response.status === 200){
               const data = response.data;
@@ -46,8 +46,8 @@ const Region = () => {
     const updateRegion = async() => {
         setButtonText("Please wait");
         setButtonColor(true);
-        await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/region/${id}`, {
-            regionname:regionname, capital:capital, population:population
+        await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/regions/${id}`, {
+            name:name, capital:capital, population:population
         }).then((response) => {
             setMessage(response.data.message); 
         }).catch((err) => {
@@ -55,12 +55,12 @@ const Region = () => {
         }).finally(()=>{
           setButtonText("Update");
           setButtonColor(false);
-          router.push('/');
+          router.push('/regions');
         });
     };
     const submitData = (e)=>{
         e.preventDefault();
-        if(!regionname || !capital || !population){
+        if(!name || !capital || !population){
             setMessage("Please provide value for each input field!");
         }else{
           updateRegion(state);
@@ -81,7 +81,7 @@ const Region = () => {
             <div className="panel-body">
               <form className="form_container" onSubmit={submitData}>
                 <div>{message}</div>
-                <input type="text" name="regionname" className="reg_input" placeholder="Enter Region Name" onChange={handleInput} value={regionname} />
+                <input type="text" name="name" className="reg_input" placeholder="Enter Region Name" onChange={handleInput} value={name} />
                 <input type="text" name="capital" className="reg_input" placeholder="Enter Region Capital" onChange={handleInput} value={capital} />
                 <input type="number" name="population" className="reg_input" placeholder="Enter Population" onChange={handleInput} value={population} />
                 <button type="submit" className="btn_reg" onClick={()=>{buttonColor}} style={{backgroundColor:buttonColor==true?"gray":"green"}}> {buttonText} </button>
